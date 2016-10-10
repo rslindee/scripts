@@ -31,4 +31,4 @@
                 cp -av "$TR_TORRENT_NAME" "$MKV_DIR" ;;
         esac
     fi
-} >> "LOG_FILE"
+} >> "$LOG_FILE"
