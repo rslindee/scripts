@@ -3,7 +3,7 @@
 FLAC_DIR=/mnt/hit1/FLAC/_Incoming
 MP3_DIR=/mnt/hit1/MP3/_Non_FLAC
 MKV_DIR=/mnt/3Tera/Movies
-LOG_FILE=/mnt/BLUE500/download_log.txt
+LOG_FILE=/mnt/GREEN1000/download_log.txt
 {
     echo "========================================"
     echo "$(date) ---- $TR_TORRENT_NAME finished"
