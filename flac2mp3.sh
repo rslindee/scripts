@@ -18,3 +18,5 @@ for d in */ ; do
     # Move FLAC album folder out of Incoming and into FLAC root folder
     mv "$d" ..
 done
+# Update MPD library
+mpc update
