@@ -1,17 +1,17 @@
 #!/bin/bash
 # Re-encodes FLAC folders to MP3
 FLAC_DIR=/mnt/hit1/FLAC/_Incoming
-MP3_DIR=/mnt/hit1/MP3/
+MP3_DIR=/mnt/hit1/MP3
 NUM_JOBS=2
 
 ALBUM_FOLDER=
 # Gets metadata from FLAC file and populate $ALBUM_FOLDER
 function get_album_folder {
-    ARTIST="$(metaflac --show-tag=ARTIST "$1")"
+    ARTIST=$(metaflac --show-tag=ARTIST "$1")
     ARTIST=${ARTIST#ARTIST=}
-    ALBUM="$(metaflac --show-tag=ALBUM "$1")"
+    ALBUM=$(metaflac --show-tag=ALBUM "$1")
     ALBUM=${ALBUM#ALBUM=}
-    ALBUM_FOLDER="$ARTIST"" - ""$ALBUM"
+    ALBUM_FOLDER="$ARTIST - $ALBUM"
 }
 # Enter root FLAC incoming directory
 cd "$FLAC_DIR"
