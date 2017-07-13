@@ -8,9 +8,9 @@ ALBUM_FOLDER=
 # Gets metadata from FLAC file and populate $ALBUM_FOLDER
 function get_album_folder {
     ARTIST=$(metaflac --show-tag=ARTIST "$1")
-    ARTIST=${ARTIST#ARTIST=}
+    ARTIST=${ARTIST#*=}
     ALBUM=$(metaflac --show-tag=ALBUM "$1")
-    ALBUM=${ALBUM#ALBUM=}
+    ALBUM=${ALBUM#*=}
     ALBUM_FOLDER="$ARTIST - $ALBUM"
 }
 # Enter root FLAC incoming directory
