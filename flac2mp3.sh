@@ -11,7 +11,7 @@ function get_album_folder {
     ARTIST=${ARTIST#*=}
     ALBUM=$(metaflac --show-tag=ALBUM "$1")
     ALBUM=${ALBUM#*=}
-    ALBUM_FOLDER="$ARTIST - $ALBUM"
+    ALBUM_FOLDER=$(sed "s/\//\_/g" <<< "$ARTIST - $ALBUM")
 }
 # Enter root FLAC incoming directory
 cd "$FLAC_DIR"
@@ -26,7 +26,7 @@ for d in */ ; do
     # Create an album directory in MP3 root dir
     mkdir "$MP3_DIR/$ALBUM_FOLDER"
     # Re-encode FLAC to MP3
-    parallel-moreutils -i -j$NUM_JOBS ffmpeg -i {} -qscale:a 0 {}.mp3 -- ./*.flac
+    parallel-moreutils -i -j$NUM_JOBS ffmpeg -loglevel info  -i {} -qscale:a 0 {}.mp3 -- ./*.flac
     rename .flac.mp3 .mp3 ./*.mp3
     # Move MP3 files to album dir in MP3 directory
     mv *.mp3 "$MP3_DIR/$ALBUM_FOLDER"
