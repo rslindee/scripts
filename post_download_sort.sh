@@ -2,7 +2,7 @@
 # Sorts media files when finished downloading via Transmission
 FLAC_DIR=/mnt/hit1/FLAC/_Incoming
 MP3_DIR=/mnt/hit1/MP3/_Non_FLAC
-MKV_DIR=/mnt/3Tera/Movies
+MKV_DIR=/mnt/red8t/movies
 LOG_FILE=/mnt/GREEN1000/download_log.txt
 {
     echo "========================================"
