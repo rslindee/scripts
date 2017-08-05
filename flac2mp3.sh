@@ -2,7 +2,6 @@
 # Re-encodes FLAC folders to MP3
 FLAC_DIR=/mnt/hit1/FLAC/_Incoming
 MP3_DIR=/mnt/hit1/MP3
-NUM_JOBS=2
 
 ALBUM_FOLDER=
 # Gets metadata from FLAC file and populate $ALBUM_FOLDER
@@ -26,7 +25,9 @@ for d in */ ; do
     # Create an album directory in MP3 root dir
     mkdir "$MP3_DIR/$ALBUM_FOLDER"
     # Re-encode FLAC to MP3
-    parallel-moreutils -i -j$NUM_JOBS ffmpeg -loglevel info  -i {} -qscale:a 0 {}.mp3 -- ./*.flac
+    for a in ./*.flac; do
+        ffmpeg -i "$a" -qscale:a 0 "${a[@]/%flac/mp3}"
+    done
     rename .flac.mp3 .mp3 ./*.mp3
     # Move MP3 files to album dir in MP3 directory
     mv *.mp3 "$MP3_DIR/$ALBUM_FOLDER"
