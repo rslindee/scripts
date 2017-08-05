@@ -4,7 +4,7 @@ FLAC_DIR=/mnt/hit1/FLAC/_Incoming
 MP3_DIR=/mnt/hit1/MP3
 
 # Gets metadata from FLAC file and populate $ALBUM_FOLDER
-function get_album_folder()
+get_album_folder ()
 {
     ARTIST=$(metaflac --show-tag=ARTIST "$1")
     ARTIST=${ARTIST#*=}
