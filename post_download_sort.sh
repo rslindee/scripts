@@ -16,6 +16,7 @@ LOG_FILE=/mnt/GREEN1000/download_log.txt
         then
             echo "FLAC found"
             cp -av "$TR_TORRENT_NAME" "$FLAC_DIR"
+            ./flac2mp3.sh
         elif ls "$TR_TORRENT_NAME"/*.mp3 > /dev/null 2>&1
         then
             echo "MP3 found"

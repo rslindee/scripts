@@ -34,5 +34,5 @@ for d in */ ; do
     # Move FLAC album folder out of Incoming and into FLAC root folder
     mv "$d" "../$ALBUM_FOLDER"
 done
-# Update MPD library
-mpc update
+# TODO SSH and Update MPD library
+#mpc update
