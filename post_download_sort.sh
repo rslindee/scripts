@@ -4,6 +4,7 @@ FLAC_DIR=/mnt/hit1/FLAC/_Incoming
 MP3_DIR=/mnt/hit1/MP3/_Non_FLAC
 MKV_DIR=/mnt/red8t/movies
 LOG_FILE=/mnt/GREEN1000/download_log.txt
+SCRIPT_DIR=/mnt/GREEN1000/scripts
 {
     echo "========================================"
     echo "$(date) ---- $TR_TORRENT_NAME finished"
@@ -16,7 +17,7 @@ LOG_FILE=/mnt/GREEN1000/download_log.txt
         then
             echo "FLAC found"
             cp -av "$TR_TORRENT_NAME" "$FLAC_DIR"
-            ./flac2mp3.sh
+            "$SCRIPT_DIR"/flac2mp3.sh
         elif ls "$TR_TORRENT_NAME"/*.mp3 > /dev/null 2>&1
         then
             echo "MP3 found"
