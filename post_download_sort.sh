@@ -1,10 +1,11 @@
 #!/bin/sh
 # Sorts media files when finished downloading via Transmission
-FLAC_DIR=/mnt/hit1/FLAC/_Incoming
-MP3_DIR=/mnt/hit1/MP3/_Non_FLAC
+FLAC_DIR=/mnt/hit1/FLAC
+NON_FLAC_MP3_DIR=/mnt/hit1/MP3/_Non_FLAC
 MKV_DIR=/mnt/red8t/movies
 LOG_FILE=/mnt/GREEN1000/download_log.txt
-SCRIPT_DIR=/mnt/GREEN1000/scripts
+FLAC2MP3_SCRIPT=/mnt/GREEN1000/scripts/flac2mp3.sh
+MP3_DIR=/mnt/hit1/MP3
 {
     echo "========================================"
     echo "$(date) ---- $TR_TORRENT_NAME finished"
@@ -16,12 +17,13 @@ SCRIPT_DIR=/mnt/GREEN1000/scripts
         if ls "$TR_TORRENT_NAME"/*.flac > /dev/null 2>&1
         then
             echo "FLAC found"
-            cp -av "$TR_TORRENT_NAME" "$FLAC_DIR"
-            "$SCRIPT_DIR"/flac2mp3.sh
+            cp -av "$TR_TORRENT_NAME" "$FLAC_DIR/_Incoming"
+            # Call flac2mp3 script
+            "$FLAC2MP3_SCRIPT" "$FLAC_DIR/_Incoming/$TR_TORRENT_NAME" "$FLAC_DIR" "$MP3_DIR"
         elif ls "$TR_TORRENT_NAME"/*.mp3 > /dev/null 2>&1
         then
             echo "MP3 found"
-            cp -av "$TR_TORRENT_NAME" "$MP3_DIR"
+            cp -av "$TR_TORRENT_NAME" "$NON_FLAC_MP3_DIR"
         elif ls "$TR_TORRENT_NAME"/*.mkv > /dev/null 2>&1
         then
             echo "MKV(s) in folder found"
