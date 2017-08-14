@@ -22,10 +22,9 @@ for f in *.flac; do
     break
 done
 # Re-encode FLAC to MP3
-for a in ./*.flac; do
+for a in *.flac; do
     ffmpeg -i "$a" -qscale:a 0 "${a[@]/%flac/mp3}"
 done
-rename .flac.mp3 .mp3 ./*.mp3
 # Create directory in MP3 root dir
 mkdir -p "$MP3_DIR/$ARTIST/$ALBUM"
 # Move MP3 files to album dir in MP3 directory
