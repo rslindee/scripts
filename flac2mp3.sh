@@ -4,6 +4,9 @@ FLAC_ALBUM_DIR=$1
 FLAC_DIR=$2
 MP3_DIR=$3
 
+# Exit prematurely on any failure
+set -e
+
 # Gets metadata from FLAC file and populate $ALBUM_FOLDER
 get_artist_album ()
 {
