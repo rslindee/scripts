@@ -1,39 +1,43 @@
 #!/bin/sh
-# Sorts media files when finished downloading via Transmission
+# Sorts media files when finished downloading via Deluge
+TORRENTID=$1
+TORRENTNAME=$2
+TORRENTPATH=$3
+
 FLAC_DIR=/mnt/hit1/FLAC
 NON_FLAC_MP3_DIR=/mnt/hit1/MP3/_Non_FLAC
 MKV_DIR=/mnt/red8t/movies
-LOG_FILE=/mnt/GREEN1000/download_log.txt
-FLAC2MP3_SCRIPT=/mnt/GREEN1000/scripts/flac2mp3.sh
+LOG_FILE=/mnt/3tera/post_download_sort.log
+FLAC2MP3_SCRIPT=/mnt/3tera/torrent/scripts/flac2mp3.sh
 MP3_DIR=/mnt/hit1/MP3
 {
     echo "========================================"
-    echo "$(date) ---- $TR_TORRENT_NAME finished"
-    cd "$TR_TORRENT_DIR"
+    echo "$(date) ---- $TORRENTNAME finished"
+    cd "$TORRENTPATH"
     # If torrent is dir, enter dir
-    if [ -d "$TR_TORRENT_NAME" ]
+    if [ -d "$TORRENTNAME" ]
     then
         # Check for FLAC and copy
-        if ls "$TR_TORRENT_NAME"/*.flac > /dev/null 2>&1
+        if ls "$TORRENTNAME"/*.flac > /dev/null 2>&1
         then
             echo "FLAC found"
-            cp -av "$TR_TORRENT_NAME" "$FLAC_DIR/_Incoming"
+            cp -av "$TORRENTNAME" "$FLAC_DIR/_Incoming"
             # Call flac2mp3 script
-            "$FLAC2MP3_SCRIPT" "$FLAC_DIR/_Incoming/$TR_TORRENT_NAME" "$FLAC_DIR" "$MP3_DIR"
-        elif ls "$TR_TORRENT_NAME"/*.mp3 > /dev/null 2>&1
+            "$FLAC2MP3_SCRIPT" "$FLAC_DIR/_Incoming/$TORRENTNAME" "$FLAC_DIR" "$MP3_DIR"
+        elif ls "$TORRENTNAME"/*.mp3 > /dev/null 2>&1
         then
             echo "MP3 found"
-            cp -av "$TR_TORRENT_NAME" "$NON_FLAC_MP3_DIR"
-        elif ls "$TR_TORRENT_NAME"/*.mkv > /dev/null 2>&1
+            cp -av "$TORRENTNAME" "$NON_FLAC_MP3_DIR"
+        elif ls "$TORRENTNAME"/*.mkv > /dev/null 2>&1
         then
             echo "MKV(s) in folder found"
-            cp -av "$TR_TORRENT_NAME"/*.mkv "$MKV_DIR"
+            cp -av "$TORRENTNAME"/*.mkv "$MKV_DIR"
         fi
     else
-        case "${TR_TORRENT_NAME}" in
+        case "${TORRENTNAME}" in
             *mkv)
                 echo "MKV found"
-                cp -av "$TR_TORRENT_NAME" "$MKV_DIR" ;;
+                cp -av "$TORRENTNAME" "$MKV_DIR" ;;
         esac
     fi
 } >> "$LOG_FILE"
