@@ -10,9 +10,11 @@ set -eu
 cd "$BOOK_DIR"
 
 # Convert and delete the original book format
-for f in *.epub; do
-    pandoc "$f" -o "${f%.epub}.mobi"
-    rm "$f"
-done
+if ls *.epub >/dev/null 2>&1; then
+    for f in *.epub; do
+        pandoc "$f" -o "${f%.epub}.mobi"
+        rm "$f"
+    done
+fi
 
 rsync -rltv "$BOOK_DIR" "$KINDLE_DIR"
