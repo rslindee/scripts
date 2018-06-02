@@ -1,7 +1,7 @@
 #!/bin/bash
 # Converts and syncs books to Kindle device
-BOOK_DIR=/mnt/hit1/books
-KINDLE_DIR=/misc/kindle/documents
+BOOK_DIR=/mnt/hit1/books/
+KINDLE_DIR=/misc/kindle
 
 # Exit prematurely on any failure and not use undefined vars
 set -eu
@@ -17,4 +17,10 @@ if ls *.epub >/dev/null 2>&1; then
     done
 fi
 
-rsync -rltv "$BOOK_DIR" "$KINDLE_DIR"
+rsync -rltv "$BOOK_DIR" "$KINDLE_DIR/documents"
+
+until sudo umount "$KINDLE_DIR"
+do
+    echo "Retrying umount of kindle in 1s..."
+    sleep 1
+done
