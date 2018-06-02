@@ -46,22 +46,29 @@ BOOK_DIR=/mnt/hit1/books
         case "${TORRENTNAME}" in
             *mkv)
                 echo "MKV found"
-                cp -av "$TORRENTNAME" "$MKV_DIR" ;;
-        esac
-        case "${TORRENTNAME}" in
+                cp -av "$TORRENTNAME" "$MKV_DIR"
+                break
+                ;;
             *epub)
                 echo "EPUB found"
-                cp -av "$TORRENTNAME" "$BOOK_DIR" ;;
-        esac
-        case "${TORRENTNAME}" in
+                cp -av "$TORRENTNAME" "$BOOK_DIR"
+                break
+                ;;
             *mobi)
                 echo "MOBI found"
-                cp -av "$TORRENTNAME" "$BOOK_DIR" ;;
-        esac
-        case "${TORRENTNAME}" in
+                cp -av "$TORRENTNAME" "$BOOK_DIR"
+                break
+                ;;
             *pdf)
                 echo "PDF found"
-                cp -av "$TORRENTNAME" "$BOOK_DIR" ;;
+                cp -av "$TORRENTNAME" "$BOOK_DIR"
+                break
+                ;;
+            *azw3)
+                echo "AZW3 found"
+                cp -av "$TORRENTNAME" "$BOOK_DIR"
+                break
+                ;;
         esac
     fi
 } >> "$LOG_FILE"
