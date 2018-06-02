@@ -10,6 +10,7 @@ MKV_DIR=/mnt/red8t/movies
 LOG_FILE=/mnt/3tera/post_download_sort.log
 FLAC2MP3_SCRIPT=/mnt/3tera/torrent/scripts/flac2mp3.sh
 MP3_DIR=/mnt/hit1/MP3
+BOOK_DIR=/mnt/hit1/books
 {
     echo "========================================"
     echo "$(date) ---- $TORRENTNAME finished"
@@ -32,12 +33,35 @@ MP3_DIR=/mnt/hit1/MP3
         then
             echo "MKV(s) in folder found"
             cp -av "$TORRENTNAME"/*.mkv "$MKV_DIR"
+        elif ls "$TORRENTNAME"/*.epub > /dev/null 2>&1
+        then
+            echo "EPUB(s) in folder found"
+            cp -av "$TORRENTNAME"/*.epub "$BOOK_DIR"
+        elif ls "$TORRENTNAME"/*.mobi > /dev/null 2>&1
+        then
+            echo "MOBI(s) in folder found"
+            cp -av "$TORRENTNAME"/*.mobi "$BOOK_DIR"
         fi
     else
         case "${TORRENTNAME}" in
             *mkv)
                 echo "MKV found"
                 cp -av "$TORRENTNAME" "$MKV_DIR" ;;
+        esac
+        case "${TORRENTNAME}" in
+            *epub)
+                echo "EPUB found"
+                cp -av "$TORRENTNAME" "$BOOK_DIR" ;;
+        esac
+        case "${TORRENTNAME}" in
+            *mobi)
+                echo "MOBI found"
+                cp -av "$TORRENTNAME" "$BOOK_DIR" ;;
+        esac
+        case "${TORRENTNAME}" in
+            *pdf)
+                echo "PDF found"
+                cp -av "$TORRENTNAME" "$BOOK_DIR" ;;
         esac
     fi
 } >> "$LOG_FILE"
