@@ -7,6 +7,9 @@
 # to Logitech for making it (mostly) Open Source. A future version of this routine
 # could actually be written as a plugin for Squeezebox Server.
 #
+# Dependencies:
+# - Audio::Scan (install via `sudo cpan Audio::Scan`
+#
 # How it works:
 # - Load the ipod's GNUTunes Database
 # - Initialize the 'to be deleted' list with all songs on iPod
@@ -79,53 +82,52 @@ my %tagMapping = (
     'MEDIA JUKEBOX: PEAK LEVEL'         => 'REPLAYGAIN_TRACK_PEAK',
     'MEDIA JUKEBOX: ALBUM ARTIST'       => 'ALBUMARTIST',
 
-    # bug 10724 - foobar2000 users like to use "ALBUM ARTIST" (instead of
-    "ALBUMARTIST")
-'ALBUM ARTIST'                      => 'ALBUMARTIST',
+    # bug 10724 - foobar2000 users like to use "ALBUM ARTIST" (instead of "ALBUMARTIST")
+    'ALBUM ARTIST'                      => 'ALBUMARTIST',
 
-# MP4 Tags
-ALB => "ALBUM",
-ART => "ARTIST",
-NAM => "TITLE",
-TRKN => "TRACKNUM",
+    # MP4 Tags
+    ALB => "ALBUM",
+    ART => "ARTIST",
+    NAM => "TITLE",
+    TRKN => "TRACKNUM",
 
-# ID3v2 frame ID mapping to our keywords
-# Notes:
-# Audio::Scan via libid3tag already converts everything to ID3v2.4 IDs
-# so that's all we have to worry about here.
-# Non-standard v2.3 tags are prefixed with 'Y'
-COMM => "COMMENT",
-TALB => "ALBUM",
-TBPM => "BPM",
-TCOM => "COMPOSER",
-TCMP => "COMPILATION",
-YTCP => "COMPILATION", # non-standard v2.3 frame
-TCON => "GENRE",
-TYER => "YEAR",
-TDRC => "YEAR",
-TDOR => "YEAR",
-XDOR => "YEAR",
-TIT2 => "TITLE",
-TPE1 => "ARTIST",
-TPE2 => "BAND",
-TPE3 => "CONDUCTOR",
-TPOS => "SET",
-TRCK => "TRACKNUM",
-TSOA => "ALBUMSORT",
-YTSA => 'ALBUMSORT',
-TSOP => "ARTISTSORT",
-YTSP => "ARTISTSORT",      # non-standard iTunes tag
-TSOT => "TITLESORT",
-YTST => "TITLESORT",       # non-standard iTunes tag
-'TST ' => "TITLESORT",     # broken iTunes tag
-TSO2 => "ALBUMARTISTSORT",
-YTS2 => "ALBUMARTISTSORT", # non-standard iTunes tag
-TSOC => "COMPOSERSORT",
-YTSC => "COMPOSERSORT",    # non-standard iTunes tag
-YRVA => "RVAD",
-UFID => "MUSICBRAINZ_ID",
-USLT => "LYRICS",
-XSOP => "ARTISTSORT",
+    # ID3v2 frame ID mapping to our keywords
+    # Notes:
+    # Audio::Scan via libid3tag already converts everything to ID3v2.4 IDs
+    # so that's all we have to worry about here.
+    # Non-standard v2.3 tags are prefixed with 'Y'
+    COMM => "COMMENT",
+    TALB => "ALBUM",
+    TBPM => "BPM",
+    TCOM => "COMPOSER",
+    TCMP => "COMPILATION",
+    YTCP => "COMPILATION", # non-standard v2.3 frame
+    TCON => "GENRE",
+    TYER => "YEAR",
+    TDRC => "YEAR",
+    TDOR => "YEAR",
+    XDOR => "YEAR",
+    TIT2 => "TITLE",
+    TPE1 => "ARTIST",
+    TPE2 => "BAND",
+    TPE3 => "CONDUCTOR",
+    TPOS => "SET",
+    TRCK => "TRACKNUM",
+    TSOA => "ALBUMSORT",
+    YTSA => 'ALBUMSORT',
+    TSOP => "ARTISTSORT",
+    YTSP => "ARTISTSORT",      # non-standard iTunes tag
+    TSOT => "TITLESORT",
+    YTST => "TITLESORT",       # non-standard iTunes tag
+    'TST ' => "TITLESORT",     # broken iTunes tag
+    TSO2 => "ALBUMARTISTSORT",
+    YTS2 => "ALBUMARTISTSORT", # non-standard iTunes tag
+    TSOC => "COMPOSERSORT",
+    YTSC => "COMPOSERSORT",    # non-standard iTunes tag
+    YRVA => "RVAD",
+    UFID => "MUSICBRAINZ_ID",
+    USLT => "LYRICS",
+    XSOP => "ARTISTSORT",
 );
 
 GetOptions (\%opts, "h|help", "s|sync", "mount|m=s", "d|debug",
@@ -280,8 +282,7 @@ sub go {
     if ($opts{s}) {
         my $goodTrack;
         my @ids;
-        # Why why why do I have to explicitely encode to UTF8 ??? The tags seem
-        to
+        # Why why why do I have to explicitely encode to UTF8 ??? The tags seem to
         # always be converted to Latin1 ????
         my $artist = encode('utf8',$tags->{ARTIST});
         my $album = encode('utf8',$tags->{ALBUM});
@@ -297,14 +298,11 @@ sub go {
         } else {
             $goodTrack = 0;
         }
-        # Now, sometimes the Album is not known, in which case we should not
-        include it into the seach terms
+        # Now, sometimes the Album is not known, in which case we should not include it into the seach terms
         if (nb($album)) {
-            @ids = ip_search(artist => $artist, album => $album, title =>
-                $title, songnum => $goodTrack, exact =>1);
+            @ids = ip_search(artist => $artist, album => $album, title => $title, songnum => $goodTrack, exact =>1);
         } else {
-            @ids = ip_search(artist => $artist, title => $title, songnum
-                => $goodTrack, exact =>1);
+            @ids = ip_search(artist => $artist, title => $title, songnum => $goodTrack, exact =>1);
         }
         if (scalar @ids) {
             foreach my $id (@ids) {
@@ -486,8 +484,7 @@ sub doTagMapping {
 
     while ( my ($old, $new) = each %tagMapping ) {
         if ( exists $tags->{$old} ) {
-            # Caller can set $no_overwrite if ID3 tags should not
-            replace
+            # Caller can set $no_overwrite if ID3 tags should not replace
             # existing tags, i.e. FLAC tags
             next if $no_overwrite && exists $tags->{$new};
 
@@ -561,12 +558,11 @@ sub doTagMapping {
     $tags->{HAS_COVER} = 1 if $tags->{APIC};
 }
 
-
 sub usage {
-    return << "end_usage";
+    return << 'END_USAGE';
 USAGE: $0 <dir> <cmd> [options]
 
-sync_ipod.pl Version $VERSION
+sync_ipod.pl Version
 
 This script is used to synchronize the contents of an iPod with
 a local repository.
@@ -583,8 +579,9 @@ are doing.
 
 [OPTIONS]
     -d | --debug     - Additional debug output
-        -m | --mount     - iPod mountpoint
+    -m | --mount     - iPod mountpoint
 
-Edouard Lafargue <address@hidden> 2010.03.13
-end_usage
+Edouard Lafargue <edoua...@lafargue.name> 2010.03.13
+END_USAGE
 }
+
