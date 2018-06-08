@@ -12,10 +12,14 @@ get_artist_album ()
 {
     ARTIST=$(metaflac --show-tag=ARTIST "$1")
     ARTIST=${ARTIST#*=}
+    # Remove forward slahes
     ARTIST=$(sed "s/\//\_/g" <<< "$ARTIST")
+    # Convert spaces to underscores
+    ARTIST=${$ARTIST// /_}
     ALBUM=$(metaflac --show-tag=ALBUM "$1")
     ALBUM=${ALBUM#*=}
     ALBUM=$(sed "s/\//\_/g" <<< "$ALBUM")
+    ALBUM=${$ALBUM// /_}
 }
 # Enter FLAC album directory
 cd "$FLAC_ALBUM_DIR"
