@@ -1,4 +1,5 @@
 #!/bin/sh
+# TODO: replace acpitool with upower (e.g. grep for energy-rate of all/both batteries)
 get_time_remaining() {
     # parses acpitool's battery info for the remaining charge of all batteries and sums them up
     sum_remaining_charge=$(acpitool -B | grep -E 'Remaining capacity' | awk '{print $4}' | grep -Eo "[0-9]+" | paste -sd+ | bc);
