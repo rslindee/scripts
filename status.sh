@@ -1,13 +1,19 @@
 #!/bin/sh
-# TODO: replace acpitool with upower (e.g. grep for energy-rate of all/both batteries)
 get_time_remaining() {
-    # parses acpitool's battery info for the remaining charge of all batteries and sums them up
-    sum_remaining_charge=$(acpitool -B | grep -E 'Remaining capacity' | awk '{print $4}' | grep -Eo "[0-9]+" | paste -sd+ | bc);
-    # finds the rate at which the batteries being drained at
-    present_rate=$(acpitool -B | grep -E 'Present rate' | awk '{print $4}' | grep -Eo "[0-9]+" | paste -sd+ | bc);
+    # parses system battery info for the remaining charge of all batteries, sums them up, then divides by the rate at which the batteries are being drained at
+    present_rate=0
+    sum_remaining_charge=0
+    if [ -e /sys/class/power_supply/BAT0 ]; then
+        present_rate=$(cat /sys/class/power_supply/BAT0/power_now)
+        sum_remaining_charge=$(cat /sys/class/power_supply/BAT0/energy_now)
+    fi
+    if [ -e /sys/class/power_supply/BAT1 ]; then
+        present_rate=$(echo $(cat /sys/class/power_supply/BAT1/power_now) + $present_rate | bc)
+        sum_remaining_charge=$(echo $(cat /sys/class/power_supply/BAT1/energy_now) + $sum_remaining_charge | bc)
+    fi
     # divides current charge by the rate at which it's falling, then converts it into seconds for `date`
     seconds=$(bc <<< "scale = 10; ($sum_remaining_charge / $present_rate) * 3600");
-    # prettifies the seconds into h:mm:ss format
+    # prettifies the seconds into hh:mm format
     pretty_time=$(date -u -d @${seconds} +%R);
 
     echo $pretty_time;
