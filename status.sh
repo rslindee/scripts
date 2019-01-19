@@ -48,7 +48,7 @@ fi
 
 date="$(date '+%m/%d/%y %H:%M')"
 
-audio="♪: $(amixer sget 'Master' | awk '/Front Left:/ {print $5 " " $6}' | tr -d '[]')"
+audio="♪: $(amixer sget 'Master' | awk '$0~/%/{print $4 " " $6}' | tr -d '[]')"
 if [ ! -z "$audio" ]; then
     statusinfo+="$audio"
 fi
