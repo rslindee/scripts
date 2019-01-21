@@ -4,12 +4,22 @@ get_time_remaining() {
     present_rate=0
     sum_remaining_charge=0
     if [ -e /sys/class/power_supply/BAT0 ]; then
-        present_rate=$(cat /sys/class/power_supply/BAT0/power_now)
-        sum_remaining_charge=$(cat /sys/class/power_supply/BAT0/energy_now)
+        if [ -e /sys/class/power_supply/BAT0/current_now ]; then
+            present_rate=$(cat /sys/class/power_supply/BAT0/current_now)
+            sum_remaining_charge=$(cat /sys/class/power_supply/BAT0/charge_now)
+        else
+            present_rate=$(cat /sys/class/power_supply/BAT0/power_now)
+            sum_remaining_charge=$(cat /sys/class/power_supply/BAT0/energy_now)
+         fi
     fi
     if [ -e /sys/class/power_supply/BAT1 ]; then
-        present_rate=$(echo $(cat /sys/class/power_supply/BAT1/power_now) + $present_rate | bc)
-        sum_remaining_charge=$(echo $(cat /sys/class/power_supply/BAT1/energy_now) + $sum_remaining_charge | bc)
+        if [ -e /sys/class/power_supply/BAT1/current_now ]; then
+            present_rate=$(cat /sys/class/power_supply/BAT1/current_now)
+            sum_remaining_charge=$(cat /sys/class/power_supply/BAT1/charge_now)
+        else
+            present_rate=$(echo $(cat /sys/class/power_supply/BAT1/power_now) + $present_rate | bc)
+            sum_remaining_charge=$(echo $(cat /sys/class/power_supply/BAT1/energy_now) + $sum_remaining_charge | bc)
+        fi
     fi
     # divides current charge by the rate at which it's falling, then converts it into seconds for `date`
     seconds=$(bc <<< "scale = 10; ($sum_remaining_charge / $present_rate) * 3600");
