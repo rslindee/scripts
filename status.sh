@@ -62,7 +62,7 @@ audio="♪: $(amixer sget 'Master' | awk -F"[][]" '/%/ { print $2 " " $(NF-1);ex
 if [ ! -z "$audio" ]; then
     statusinfo+="$audio"
 fi
-wifi_ssid="$(nmcli -color no -field type,state,connection dev status | awk '/^wifi.*connected/ {print $3}')"
+wifi_ssid="$(nmcli -color no -field type,state,connection dev status | awk '/^wifi.*\ connected/ {print $3}')"
 wifi_rssi="$(cat /proc/net/wireless | awk '/^wl/ {print $4}' | cut -d . -f 1)dBm"
 if [ ! -z "$wifi_ssid" ]; then
     statusinfo+="
