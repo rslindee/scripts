@@ -1,5 +1,6 @@
 #!/bin/bash
 # Re-encodes FLAC folders to MP3
+# dependencies: ffmpeg, flac
 FLAC_ALBUM_DIR=$1
 FLAC_DIR=$2
 MP3_DIR=$3
