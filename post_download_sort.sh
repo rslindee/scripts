@@ -1,13 +1,13 @@
 #!/bin/sh
 # Sorts media files when finished downloading via Transmission
 
-FLAC_DIR=/mnt/10tera/FLAC
-NON_FLAC_MP3_DIR=/mnt/10tera/MP3/_Non_FLAC
+FLAC_DIR=/mnt/5tera/flac
+NON_FLAC_MP3_DIR=/mnt/5tera/mp3/_Non_FLAC
 MKV_DIR=/mnt/8tera/movies
 LOG_FILE=/mnt/3tera/post_download_sort.log
 FLAC2MP3_SCRIPT=/mnt/3tera/scripts/flac2mp3.sh
-MP3_DIR=/mnt/10tera/MP3
-BOOK_DIR=/mnt/10tera/books
+MP3_DIR=/mnt/5tera/mp3
+BOOK_DIR=/mnt/5tera/books
 {
     echo "========================================"
     echo "$(date) ---- $TR_TORRENT_NAME finished"
