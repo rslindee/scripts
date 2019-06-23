@@ -1,7 +1,7 @@
 #!/bin/bash
 # Converts and syncs books to Kindle device
-BOOK_DIR=/mnt/hit1/books/
-KINDLE_DIR=/misc/kindle
+BOOK_DIR=/mnt/5tera/books/
+KINDLE_DIR=/run/media/rich/Kindle
 
 # Exit prematurely on any failure and not use undefined vars
 set -eu
