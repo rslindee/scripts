@@ -17,7 +17,8 @@ if ls *.epub >/dev/null 2>&1; then
     done
 fi
 
-rsync -rltv "$BOOK_DIR" "$KINDLE_DIR/documents"
+# rsync has obnoxious problems with fat filesystems
+cp -ru "$BOOK_DIR"/* "$KINDLE_DIR/documents"
 
 until sudo umount "$KINDLE_DIR"
 do
