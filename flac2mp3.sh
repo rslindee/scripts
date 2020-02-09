@@ -27,8 +27,10 @@ get_artist_album ()
 set_albumartist_if_null ()
 {
     ALBUMARTIST=$(metaflac --show-tag=ALBUMARTIST "$1")
+    ALBUMARTIST=${ALBUMARTIST#*=}
     if [ -z "$ALBUMARTIST" ]; then
         TEMP_ARTIST=$(metaflac --show-tag=ARTIST "$1")
+        TEMP_ARTIST=${ARTIST#*=}
         metaflac --set-tag=ALBUMARTIST="$TEMP_ARTIST" "$1"
     fi
 }
