@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 get_time_remaining() {
     # parses system battery info for the remaining charge of all batteries, sums them up, then divides by the rate at which the batteries are being drained at
     present_rate=0
@@ -17,54 +17,42 @@ get_time_remaining() {
             present_rate=$(cat /sys/class/power_supply/BAT1/current_now)
             sum_remaining_charge=$(cat /sys/class/power_supply/BAT1/charge_now)
         else
-            present_rate=$(echo $(cat /sys/class/power_supply/BAT1/power_now) + $present_rate | bc)
-            sum_remaining_charge=$(echo $(cat /sys/class/power_supply/BAT1/energy_now) + $sum_remaining_charge | bc)
+            present_rate=$(echo "$(cat /sys/class/power_supply/BAT1/power_now)" + "$present_rate" | bc)
+            sum_remaining_charge=$(echo "$(cat /sys/class/power_supply/BAT1/energy_now)" + "$sum_remaining_charge" | bc)
         fi
     fi
     # divides current charge by the rate at which it's falling, then converts it into seconds for `date`
-    seconds=$(bc <<< "scale = 10; ($sum_remaining_charge / $present_rate) * 3600");
+    seconds=$(bc <<< "scale = 10; ($sum_remaining_charge / $present_rate) * 3600")
     # prettifies the seconds into hh:mm format
-    pretty_time=$(date -u -d @${seconds} +%R);
+    pretty_time=$(date -u -d @"${seconds}" +%R)
 
-    echo $pretty_time;
+    echo "$pretty_time"
 }
 
 get_battery_combined_percent() {
     # get charge of all batteries, combine them
-    total_charge=$(expr $(acpi -b | awk '{print $4}' | grep -Eo "[0-9]+" | paste -sd+ | bc));
+    total_charge=$(acpi -b | awk '{print $4}' | grep -Eo "[0-9]+" | paste -sd+ | bc)
     # get amount of batteries in the device
-    battery_number=$(acpi -b | wc -l);
-    percent=$(expr $total_charge / $battery_number);
+    battery_number=$(acpi -b | wc -l)
+    percent=$((total_charge / battery_number))
 
-    echo $percent;
+    echo "$percent"
 }
 
 get_battery_charging_status() {
     # acpi can give Unknown or Charging if charging, https://unix.stackexchange.com/questions/203741/lenovo-t440s-battery-status-unknown-but-charging
-    if ! $(acpi -b | grep --quiet Discharging)
-    then
-        echo "CHRG";
-    else
-        echo "BATT";
-    fi
+    acpi -b | grep --quiet Discharging && echo "BATT" || echo "CHRG"
 }
-
-if [ -e /sys/class/power_supply/BAT0 ]; then
-    battery="
-    $(get_battery_charging_status) $(get_battery_combined_percent)% $(get_time_remaining)"
-else
-    battery=""
-fi
 
 date="$(date '+%m/%d/%y %H:%M')"
 
 audio="♪: $(amixer sget 'Master' | awk -F"[][]" '/%/ { print $2 " " $(NF-1);exit;}')"
-if [ ! -z "$audio" ]; then
+if [ -n "$audio" ]; then
     statusinfo+="$audio"
 fi
 wifi_ssid="$(nmcli -color no -field type,state,connection dev status | awk '/^wifi.*\ connected/ {print $3}')"
-wifi_rssi="$(cat /proc/net/wireless | awk '/^wl/ {print $4}' | cut -d . -f 1)dBm"
-if [ ! -z "$wifi_ssid" ]; then
+wifi_rssi="$(awk '/^wl/ {print $4}' /proc/net/wireless | cut -d . -f 1)dBm"
+if [ -n "$wifi_ssid" ]; then
     statusinfo+="
 $wifi_ssid $wifi_rssi"
 fi
