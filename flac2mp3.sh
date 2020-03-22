@@ -54,11 +54,11 @@ done
 # Create directory in MP3 root dir
 mkdir -p "$MP3_DIR/$ARTIST/$ALBUM"
 # Move MP3 files to album dir in MP3 directory
-mv *.mp3 "$MP3_DIR/$ARTIST/$ALBUM"
+mv ./*.mp3 "$MP3_DIR/$ARTIST/$ALBUM"
 # Create directory in FLAC root dir
 mkdir -p "$FLAC_DIR/$ARTIST/$ALBUM"
 # Move remaining flacs and data to new FLAC dir
-mv * "$FLAC_DIR/$ARTIST/$ALBUM"
+mv ./* "$FLAC_DIR/$ARTIST/$ALBUM"
 # Delete (now empty) FLAC album folder
 rm -rf "$FLAC_ALBUM_DIR"
 # TODO SSH and Update MPD library
