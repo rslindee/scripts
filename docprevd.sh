@@ -13,7 +13,7 @@ fi
 
 case $EXTENSION in
     tex)
-        CMD="pandoc $1 -o $OUTDIR/$BASENAME.pdf"
+        CMD="pdflatex -interaction=nonstopmode $1"
         ;;
     md)
         CMD="pandoc $1 -o $OUTDIR/$BASENAME.htm"
