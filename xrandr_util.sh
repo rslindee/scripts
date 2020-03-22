@@ -7,7 +7,7 @@ enable_only_primary() {
     # enable primary display
     xrandr --output "$primary_display" --auto
     # iterate through all other non-primary displays
-    if [[ ! -z "$secondary_display" ]]; then
+    if [[ -n "$secondary_display" ]]; then
     for display in "$secondary_display"
         do
             # turn display off
@@ -28,7 +28,7 @@ case "$1" in
     # enable first found secondary display only
     primary_display=$(xrandr | awk '/ connected primary/ {print $1}')
     secondary_display=$(xrandr | awk '/ connected [^primary]/ {print $1; exit}')
-    if [[ ! -z "$secondary_display" ]]; then
+    if [[ -n "$secondary_display" ]]; then
         xrandr --output "$secondary_display" --auto --output "$primary_display" --off
     else
         exit 1
@@ -42,7 +42,7 @@ case "$1" in
     # Set secondary display as scaled duplicate of primary
     primary_res=$(xrandr | awk '/ connected primary/ {print $4}' | cut -d+ -f1)
     duplicate_display=$(xrandr | awk '/ connected [^primary]/ {print $1; exit}')
-    if [[ ! -z "$duplicate_display" ]]; then
+    if [[ -n "$duplicate_display" ]]; then
         xrandr --output "$duplicate_display" --auto --scale-from "$primary_res" 
     else
         exit 1
@@ -62,12 +62,12 @@ case "$1" in
         ordering="--left-of"
     fi
 
-    if [[ ! -z "$secondary_display" ]]; then
+    if [[ -n "$secondary_display" ]]; then
         # iterate through all other non-primary displays
         for display in "$secondary_display"
         do
             # turn display on left or right to primary display
-            xrandr --output "$display" --auto $ordering $primary_display
+            xrandr --output "$display" --auto "$ordering" "$primary_display"
         done
     fi
     ;;
