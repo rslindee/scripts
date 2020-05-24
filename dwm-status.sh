@@ -69,7 +69,7 @@ sound_monitor() {
   while true
   do
     # wait for sound event
-    grep --quiet "" <(stdbuf -oL alsactl monitor default)
+    stdbuf -oL alsactl monitor default | grep --quiet
     get_audio
     update_status
   done
