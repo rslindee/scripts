@@ -3,6 +3,9 @@ trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
 # TODO: optimize this by grabbing /sys/class/power_supply/BAT0/1 info, but may be different between laptops
 get_battery_percent() {
+    local total_charge
+    local battery_number
+
     # get charge of all batteries, combine them
     total_charge=$(acpi -b | awk '{print $4}' | grep -Eo "[0-9]+" | paste -sd+ | bc)
     # get amount of batteries in the device
@@ -12,15 +15,20 @@ get_battery_percent() {
 }
 
 update_status() {
+  get_charging_status
   statusinfo="$charger "
+  get_battery_percent
   statusinfo+="$battery_percent ┃ "
+  get_audio
   statusinfo+="$audio ┃ "
+  get_wifi_rssi
   statusinfo+="W: $wifi_rssi ┃ "
+  get_date_time
   statusinfo+="$date_time"
   xsetroot -name "$statusinfo"
 }
 
-get_battery_charging_status() {
+get_charging_status() {
     charger=$(< /sys/class/power_supply/AC/online) 
     if [[ $charger -eq 1 ]]; then
       charger="CHRG"
@@ -72,7 +80,7 @@ ac_monitor() {
   do
     # wait for acpi ac adapter event
     grep --quiet "ac_adapter"  <(stdbuf -oL acpi_listen)
-    get_battery_charging_status
+    get_charging_status
     update_status
   done &
 }
@@ -86,12 +94,6 @@ wifi_monitor() {
     update_status
   done &
 }
-
-get_date_time
-get_audio
-get_battery_charging_status
-get_battery_percent
-get_wifi_rssi
 
 sound_monitor
 ac_monitor
