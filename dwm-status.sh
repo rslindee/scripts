@@ -62,7 +62,7 @@ time_monitor() {
     get_date_time
     get_battery_percent
     update_status
-  done &
+  done
 }
 
 sound_monitor() {
@@ -72,7 +72,7 @@ sound_monitor() {
     grep --quiet "" <(stdbuf -oL alsactl monitor default)
     get_audio
     update_status
-  done &
+  done
 }
 
 ac_monitor() {
@@ -82,7 +82,7 @@ ac_monitor() {
     grep --quiet "ac_adapter"  <(stdbuf -oL acpi_listen)
     get_charging_status
     update_status
-  done &
+  done
 }
 
 wifi_monitor() {
@@ -92,13 +92,13 @@ wifi_monitor() {
     grep --quiet "connected" <(stdbuf -oL nmcli --color no --terse device monitor wlp2s0)
     get_wifi_rssi
     update_status
-  done &
+  done
 }
 
-sound_monitor
-ac_monitor
-time_monitor
-wifi_monitor
+sound_monitor &
+ac_monitor &
+time_monitor &
+wifi_monitor &
 
 update_status
 while true
