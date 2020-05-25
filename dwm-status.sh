@@ -3,15 +3,19 @@ trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
 # TODO: optimize this by grabbing /sys/class/power_supply/BAT0/1 info, but may be different between laptops
 get_battery_percent() {
-    local total_charge
-    local battery_number
-
-    # get charge of all batteries, combine them
-    total_charge=$(acpi -b | awk '{print $4}' | grep -Eo "[0-9]+" | paste -sd+ | bc)
-    # get amount of batteries in the device
-    battery_number=$(acpi -b | wc -l)
-    battery_percent=$((total_charge / battery_number))
-    battery_percent+="%"
+  for battery in /sys/class/power_supply/BAT*; do
+    if [ -e "$battery"/energy_full ]; then
+      battery_capacity=$(< "$battery"/energy_full)
+      current_energy=$(< "$battery"/energy_now)
+    else
+      battery_capacity=$(< "$battery"/charge_full)
+      current_energy=$(< "$battery"/charge_now)
+    fi
+      total_capacity=$((total_capacity + battery_capacity))
+      total_energy=$((total_energy + current_energy))
+  done
+  battery_percent=$((100*total_energy / total_capacity))
+  battery_percent+="%"
 }
 
 update_status() {
