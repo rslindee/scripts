@@ -1,6 +1,5 @@
 #!/bin/bash
 #TODO: sbin workaround?
-#TODO: test if anything dies during sleep
 
 trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
@@ -79,17 +78,23 @@ sound_monitor() {
 }
 
 ac_monitor() {
-  stdbuf -oL acpi_listen | grep --line-buffered 'ac_adapter' | 
-    while read; do 
-      update_status
-    done
+  # put in while loop, in case acpi_listen gets killed
+  while true; do
+    stdbuf -oL acpi_listen | grep --line-buffered 'ac_adapter' |
+      while read; do
+        update_status
+      done
+  done
 }
 
 wifi_monitor() {
-  stdbuf -oL nmcli --color no device monitor wlp2s0 | grep --line-buffered 'connected' | 
-    while read; do 
-      update_status
-    done
+  # put in while loop, in case nmcli gets killed
+  while true; do
+    stdbuf -oL nmcli --color no device monitor wlp2s0 | grep --line-buffered 'connected' |
+      while read; do
+        update_status
+      done
+  done
 }
 
 sound_monitor &
