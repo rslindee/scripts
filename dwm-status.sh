@@ -1,7 +1,6 @@
 #!/bin/bash
 trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
-# TODO: optimize this by grabbing /sys/class/power_supply/BAT0/1 info, but may be different between laptops
 get_battery_percent() {
   for battery in /sys/class/power_supply/BAT*; do
     if [ -e "$battery"/energy_full ]; then
@@ -63,20 +62,16 @@ time_monitor() {
   while true
   do
     sleep $((60 - $(date +%-S)))
-    get_date_time
-    get_battery_percent
     update_status
   done
 }
 
 sound_monitor() {
-  while true
-  do
-    # wait for sound event
-    stdbuf -oL alsactl monitor default | grep --quiet
-    get_audio
-    update_status
-  done
+  # wait for sound event
+  stdbuf -oL alsactl monitor default | grep --line-buffered 'default' | 
+    while read; do 
+      update_status
+    done
 }
 
 ac_monitor() {
@@ -84,7 +79,6 @@ ac_monitor() {
   do
     # wait for acpi ac adapter event
     grep --quiet "ac_adapter"  <(stdbuf -oL acpi_listen)
-    get_charging_status
     update_status
   done
 }
@@ -94,7 +88,6 @@ wifi_monitor() {
   do
     # wait for wifi event
     grep --quiet "connected" <(stdbuf -oL nmcli --color no --terse device monitor wlp2s0)
-    get_wifi_rssi
     update_status
   done
 }
