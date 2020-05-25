@@ -1,4 +1,7 @@
 #!/bin/bash
+#TODO: sbin workaround?
+#TODO: test if anything dies during sleep
+
 trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
 get_battery_percent() {
@@ -32,12 +35,12 @@ update_status() {
 }
 
 get_charging_status() {
-    charger=$(< /sys/class/power_supply/AC/online) 
-    if [[ $charger -eq 1 ]]; then
-      charger="CHRG"
-    else
-      charger="BATT"
-    fi
+  charger=$(< /sys/class/power_supply/AC/online) 
+  if [[ $charger -eq 1 ]]; then
+    charger="▲"
+  else
+    charger="▼"
+  fi
 }
 
 get_audio() {
@@ -89,12 +92,7 @@ wifi_monitor() {
 
 sound_monitor &
 ac_monitor &
-time_monitor &
 wifi_monitor &
 
 update_status
-while true
-do
-  sleep infinity
-done
-
+time_monitor
