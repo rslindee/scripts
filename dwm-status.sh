@@ -61,19 +61,21 @@ get_wifi_rssi() {
 }
 # triggers every minute
 time_monitor() {
-  while true
-  do
+  while true; do
     sleep $((60 - $(date +%-S)))
     update_status
   done
 }
 
 sound_monitor() {
-  # wait for sound event
-  stdbuf -oL alsactl monitor default | grep --line-buffered 'default' | 
-    while read; do 
-      update_status
-    done
+  # put in while loop, as alsactl dies during sleep
+  while true; do
+    # wait for sound event
+    stdbuf -oL alsactl monitor default | grep --line-buffered 'default' |
+      while read; do
+        update_status
+      done
+  done
 }
 
 ac_monitor() {
