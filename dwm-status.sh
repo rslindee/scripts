@@ -49,7 +49,6 @@ get_date_time() {
 }
 
 get_wifi_rssi() {
-  # TODO: get "disconnected" status
   wifi_rssi="$(awk '/^wl/ {print $4}' /proc/net/wireless | cut -d . -f 1)"
   if [[ -z $wifi_rssi ]]; then
     wifi_rssi="off"
@@ -75,21 +74,17 @@ sound_monitor() {
 }
 
 ac_monitor() {
-  while true
-  do
-    # wait for acpi ac adapter event
-    grep --quiet "ac_adapter"  <(stdbuf -oL acpi_listen)
-    update_status
-  done
+  stdbuf -oL acpi_listen | grep --line-buffered 'ac_adapter' | 
+    while read; do 
+      update_status
+    done
 }
 
 wifi_monitor() {
-  while true
-  do
-    # wait for wifi event
-    grep --quiet "connected" <(stdbuf -oL nmcli --color no --terse device monitor wlp2s0)
-    update_status
-  done
+  stdbuf -oL nmcli --color no device monitor wlp2s0 | grep --line-buffered 'connected' | 
+    while read; do 
+      update_status
+    done
 }
 
 sound_monitor &
