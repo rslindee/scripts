@@ -43,7 +43,16 @@ get_charging_status() {
 }
 
 get_audio() {
-  audio="♫: $(amixer sget 'Master' | awk -F"[][]" '/%/ { print $2 " " $(NF-1);exit;}')"
+  audio="$(amixer sget 'Master')"
+
+  # see if audio is unmuted
+  if [[ $audio =~ \[on\] ]]; then
+    # grab percentage
+    [[ $audio =~ [0-9]+% ]]
+    audio="A: ${BASH_REMATCH[0]}"
+  else
+    audio="A: mute"
+  fi
 }
 
 get_date_time() {
@@ -51,11 +60,13 @@ get_date_time() {
 }
 
 get_wifi_rssi() {
-  wifi_rssi="$(awk '/^wl/ {print $4}' /proc/net/wireless | cut -d . -f 1)"
-  if [[ -z $wifi_rssi ]]; then
-    wifi_rssi="off"
-  else
+  wifi_rssi=$(< /proc/net/wireless)
+  # grab first negative number, which corresponds to rssi
+  if [[ $wifi_rssi =~ -([0-9]+) ]]; then
+    wifi_rssi=${BASH_REMATCH[0]}
     wifi_rssi+="dBm"
+  else
+    wifi_rssi="off"
   fi
 }
 # triggers every minute
