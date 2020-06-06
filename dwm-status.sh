@@ -1,7 +1,16 @@
 #!/bin/bash
-#TODO: sbin workaround?
+# utilities used: amixer alsactl nmcli
 
 trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
+
+update_status() {
+  statusinfo="$charger "
+  statusinfo+="$battery_percent ┃ "
+  statusinfo+="$audio ┃ "
+  statusinfo+="W: $wifi_rssi ┃ "
+  statusinfo+="$date_time"
+  xsetroot -name "$statusinfo"
+}
 
 get_battery_percent() {
   for battery in /sys/class/power_supply/BAT*; do
@@ -17,20 +26,6 @@ get_battery_percent() {
   done
   battery_percent=$((100*total_energy / total_capacity))
   battery_percent+="%"
-}
-
-update_status() {
-  get_charging_status
-  statusinfo="$charger "
-  get_battery_percent
-  statusinfo+="$battery_percent ┃ "
-  get_audio
-  statusinfo+="$audio ┃ "
-  get_wifi_rssi
-  statusinfo+="W: $wifi_rssi ┃ "
-  get_date_time
-  statusinfo+="$date_time"
-  xsetroot -name "$statusinfo"
 }
 
 get_charging_status() {
@@ -73,7 +68,7 @@ get_wifi_rssi() {
 time_monitor() {
   while true; do
     sleep $((60 - $(date +%-S)))
-    update_status
+    echo "time" > $pipe
   done
 }
 
@@ -83,7 +78,7 @@ sound_monitor() {
     # wait for sound event
     stdbuf -oL alsactl monitor default | grep --line-buffered 'default' |
       while read; do
-        update_status
+        echo "audio" > $pipe
       done
   done
 }
@@ -93,7 +88,7 @@ ac_monitor() {
   while true; do
     stdbuf -oL acpi_listen | grep --line-buffered 'ac_adapter' |
       while read; do
-        update_status
+        echo "charge" > $pipe
       done
   done
 }
@@ -103,14 +98,44 @@ wifi_monitor() {
   while true; do
     stdbuf -oL nmcli --color no device monitor wlp2s0 | grep --line-buffered 'connected' |
       while read; do
-        update_status
+        echo "wifi" > $pipe
       done
   done
 }
 
+# setup fifo named pipe
+pipe="/tmp/dwm-status-fifo-$USER"
+# TODO: check only current user can read?
+if [[ ! -p $pipe ]]; then
+  mkfifo $pipe -m600
+fi
+
+# start monitors
 sound_monitor &
 ac_monitor &
 wifi_monitor &
+time_monitor &
 
+# get first-time values
+get_audio
+get_wifi_rssi
+get_date_time
+get_charging_status
+get_battery_percent
 update_status
-time_monitor
+
+while true; do
+  if read line <$pipe; then
+    if [[ "$line" == audio ]]; then
+      get_audio
+    elif [[ "$line" == wifi ]]; then
+      get_wifi_rssi
+    elif [[ "$line" == time ]]; then
+      get_date_time
+      get_battery_percent
+    elif [[ "$line" == charge ]]; then
+      get_charging_status
+    fi
+    update_status
+  fi
+done
