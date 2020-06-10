@@ -1,5 +1,5 @@
 #!/bin/bash
-# utilities used: amixer alsactl nmcli
+# utilities used: amixer pactl nmcli
 
 trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
@@ -76,7 +76,7 @@ sound_monitor() {
   # put in while loop, as alsactl dies during sleep
   while true; do
     # wait for sound event
-    stdbuf -oL alsactl monitor default | grep --line-buffered 'default' |
+    stdbuf -oL pactl subscribe | grep --line-buffered 'sink' |
       while read; do
         echo "audio" > $pipe
       done
