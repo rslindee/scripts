@@ -29,6 +29,7 @@ get_battery_percent() {
 }
 
 get_charging_status() {
+  # TODO: try /sys/class/power_supply/BAT0/status instead?
   charger=$(< /sys/class/power_supply/AC/online) 
   if [[ $charger -eq 1 ]]; then
     charger="▲"
@@ -76,10 +77,11 @@ sound_monitor() {
   # put in while loop, as alsactl dies during sleep
   while true; do
     # wait for sound event
-    stdbuf -oL pactl subscribe | grep --line-buffered 'sink' |
-      while read; do
-        echo "audio" > $pipe
-      done
+    grep --quiet "default" <(stdbuf -oL alsactl monitor default)
+    # hack to kill alsactl for this specific session, as it gets hung up 
+    # for some reason during undocking
+    pkill alsactl -x -s 0
+    echo "audio" > $pipe
   done
 }
 
