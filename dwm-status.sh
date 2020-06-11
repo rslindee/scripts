@@ -1,5 +1,5 @@
 #!/bin/bash
-# utilities used: amixer pactl nmcli
+# utilities used: amixer alsactl nmcli
 
 trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
@@ -29,7 +29,6 @@ get_battery_percent() {
 }
 
 get_charging_status() {
-  # TODO: try /sys/class/power_supply/BAT0/status instead?
   charger=$(< /sys/class/power_supply/AC/online) 
   if [[ $charger -eq 1 ]]; then
     charger="▲"
