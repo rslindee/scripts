@@ -1,6 +1,9 @@
 #!/bin/bash
 # utilities used: amixer pactl nmcli
 
+# add /sbin for fedora compatibility
+PATH="$PATH:/sbin"
+
 trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
 
 update_status() {
