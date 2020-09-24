@@ -61,5 +61,5 @@ mkdir -p "$FLAC_DIR/$ARTIST/$ALBUM"
 mv ./* "$FLAC_DIR/$ARTIST/$ALBUM"
 # Delete (now empty) FLAC album folder
 rm -rf "$FLAC_ALBUM_DIR"
-# TODO SSH and Update MPD library
-#mpc update
+# Add flac location to mpd library
+mpc update "$FLAC_DIR/$ARTIST/$ALBUM"
