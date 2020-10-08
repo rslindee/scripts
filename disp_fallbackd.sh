@@ -19,7 +19,7 @@ scan_connected() {
 
 while true; do
     # use udevadm to wait for a monitor remove event
-    udevadm monitor --kernel --subsystem-match=drm | grep -q -m 1 "remove.*(drm)"
+    udevadm monitor --kernel --subsystem-match=drm | grep -q -m 1 "change.*(drm)"
     # TODO: remove events of several monitors at once are pretty pretty quick (~20us), 
     # but I may want to consider adding a short (ms) sleep if fallback isn't 100% accurate
     scan_connected
