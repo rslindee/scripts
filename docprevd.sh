@@ -29,6 +29,6 @@ esac
 
 if [ $PREVIEW == true ]; then
     while true; do
-        find "$1" | entr -c bash -c "$CMD"
+        ls "$1" | entr -c bash -c "$CMD"
     done
 fi
