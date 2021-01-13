@@ -49,7 +49,7 @@ for f in *.flac; do
 done
 # Re-encode FLAC to MP3
 for a in *.flac; do
-    ffmpeg -i "$a" -qscale:a 0 "${a[@]/%flac/mp3}"
+    ffmpeg -i "$a" -qscale:a 0 "${a[@]/%flac/mp3}" -loglevel error
 done
 # Create directory in MP3 root dir
 mkdir -p "$MP3_DIR/$ARTIST/$ALBUM"
