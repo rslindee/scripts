@@ -1,5 +1,5 @@
 #!/bin/bash
-# utilities used: amixer alsactl nmcli
+# utilities used: amixer pactl nmcli
 
 # add /sbin for fedora compatibility
 PATH="$PATH:/sbin"
@@ -41,16 +41,8 @@ get_charging_status() {
 }
 
 get_audio() {
-  audio="$(amixer sget 'Master')"
-
-  # see if audio is unmuted
-  if [[ $audio =~ \[on\] ]]; then
-    # grab percentage
-    [[ $audio =~ [0-9]+% ]]
-    audio="A: ${BASH_REMATCH[0]}"
-  else
-    audio="A: mute"
-  fi
+  audio="$(pamixer --get-volume-human)"
+  audio="A: "$audio
 }
 
 get_date_time() {
@@ -76,14 +68,10 @@ time_monitor() {
 }
 
 sound_monitor() {
-  # put in while loop, as alsactl dies during sleep
+  # poll 
   while true; do
-    # wait for sound event
-    grep --quiet "default" <(stdbuf -oL alsactl monitor default)
-    # hack to kill alsactl for this specific session, as it gets hung up 
-    # for some reason during undocking
-    pkill alsactl -x -s 0
-    echo "audio" > $pipe
+    sleep 1s
+      echo "audio" > $pipe
   done
 }
 
