@@ -71,7 +71,7 @@ sound_monitor() {
   # poll 
   while true; do
     sleep 1s
-      echo "audio" > $pipe
+    echo "audio" > $pipe
   done
 }
 
@@ -125,6 +125,7 @@ while true; do
     elif [[ "$line" == time ]]; then
       get_date_time
       get_battery_percent
+      get_wifi_rssi
     elif [[ "$line" == charge ]]; then
       get_charging_status
     fi
