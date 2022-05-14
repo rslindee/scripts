@@ -62,4 +62,4 @@ mv ./* "$FLAC_DIR/$ARTIST/$ALBUM"
 # Delete (now empty) FLAC album folder
 rm -rf "$FLAC_ALBUM_DIR"
 # Add flac location to mpd library
-mpc update "$FLAC_DIR/$ARTIST/$ALBUM"
+#mpc update "$FLAC_DIR/$ARTIST/$ALBUM"
