@@ -21,6 +21,9 @@ case $EXTENSION in
     dot)
         CMD="dot -Tpng $1 -o $OUTDIR/$BASENAME.png"
         ;;
+    puml)
+        CMD="plantuml $1"
+        ;;
     *)
         echo "error: Unrecognized extension"
         exit 1
