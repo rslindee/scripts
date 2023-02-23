@@ -1,7 +1,7 @@
 #!/bin/bash
 # Re-encodes FLAC folders to MP3
 # dependencies: ffmpeg, flac
-FLAC_ALBUM_DIR=$1
+FLAC_INCOMING_ALBUM_DIR=$1
 FLAC_DIR=$2
 MP3_DIR=$3
 
@@ -36,30 +36,37 @@ set_albumartist_if_null ()
 }
 
 # Enter FLAC album directory
-cd "$FLAC_ALBUM_DIR"
+cd "$FLAC_INCOMING_ALBUM_DIR"
 
-for f in *.flac; do
-    set_albumartist_if_null "$f"
-done
-
-# Get artist and album name from first FLAC file
-for f in *.flac; do
-    get_artist_album "$f"
+find . -iname '*.flac' -type f -print0 | while IFS= read -r -d '' file
+do
+    # If albumartist is null, then copy over artist tag
+    set_albumartist_if_null "$file"
+    # Get artist and album name from first FLAC file
+    get_artist_album "$file"
     break
 done
+
 # Re-encode FLAC to MP3
-for a in *.flac; do
-    ffmpeg -i "$a" -qscale:a 0 "${a[@]/%flac/mp3}" -loglevel error
+find . -iname '*.flac' -type f -print0 | while IFS= read -r -d '' file
+do
+    ffmpeg -i "$file" -qscale:a 0 "${file[@]/%flac/mp3}" -nostdin
 done
 # Create directory in MP3 root dir
 mkdir -p "$MP3_DIR/$ARTIST/$ALBUM"
 # Move MP3 files to album dir in MP3 directory
-mv ./*.mp3 "$MP3_DIR/$ARTIST/$ALBUM"
+find . -iname '*.mp3' -type f -print0 | while IFS= read -r -d '' file
+do
+  mv "$file" "$MP3_DIR/$ARTIST/$ALBUM"
+done
 # Create directory in FLAC root dir
 mkdir -p "$FLAC_DIR/$ARTIST/$ALBUM"
 # Move remaining flacs and data to new FLAC dir
-mv ./* "$FLAC_DIR/$ARTIST/$ALBUM"
+find . -iname '*.flac' -type f -print0 | while IFS= read -r -d '' file
+do
+  mv "$file" "$FLAC_DIR/$ARTIST/$ALBUM"
+done
 # Delete (now empty) FLAC album folder
-rm -rf "$FLAC_ALBUM_DIR"
+rm -rf "$FLAC_INCOMING_ALBUM_DIR"
 # Add flac location to mpd library
 #mpc update "$FLAC_DIR/$ARTIST/$ALBUM"
