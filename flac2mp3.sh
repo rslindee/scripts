@@ -39,8 +39,9 @@ cd "$FLAC_INCOMING_ALBUM_DIR"
 
 # Recursively search for a flac file
 FIRST_FILE=$(find . -iname '*.flac' -type f -print -quit)
+# TODO: removing for now, we don't want to mess with the flac files in hopes another tagger can be used later
 # If albumartist is null, then copy over artist tag
-set_albumartist_if_null "$FIRST_FILE"
+#set_albumartist_if_null "$FIRST_FILE"
 # Get artist and album name from first FLAC file
 get_artist_album "$FIRST_FILE"
 # Re-encode FLAC to MP3
