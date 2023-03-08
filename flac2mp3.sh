@@ -39,20 +39,19 @@ cd "$FLAC_INCOMING_ALBUM_DIR"
 
 # Recursively search for a flac file
 FIRST_FILE=$(find . -iname '*.flac' -type f -print -quit)
+
 # TODO: removing for now, we don't want to mess with the flac files in hopes another tagger can be used later
 # If albumartist is null, then copy over artist tag
 #set_albumartist_if_null "$FIRST_FILE"
+
 # Get artist and album name from first FLAC file
 get_artist_album "$FIRST_FILE"
+
+# Create directory in MP3 root dir
+mkdir -p "$MP3_DIR/$ARTIST/$ALBUM"
+
 # Re-encode FLAC to MP3
 find . -iname '*.flac' -type f -print0 | while IFS= read -r -d '' file
 do
-    ffmpeg -i "$file" -qscale:a 0 "${file[@]/%flac/mp3}" -nostdin
-done
-# Create directory in MP3 root dir
-mkdir -p "$MP3_DIR/$ARTIST/$ALBUM"
-# Move MP3 files to album dir in MP3 directory
-find . -iname '*.mp3' -type f -print0 | while IFS= read -r -d '' file
-do
-  mv "$file" "$MP3_DIR/$ARTIST/$ALBUM"
+    ffmpeg -i "$file" -qscale:a 0 "$MP3_DIR/$ARTIST/$ALBUM/${file[@]/%flac/mp3}" -nostdin
 done
