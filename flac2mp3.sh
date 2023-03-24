@@ -1,4 +1,5 @@
 #!/bin/bash
+# TODO: create individual folders for multi-disc albums
 # Re-encodes FLAC folders to MP3
 # dependencies: ffmpeg, flac
 FLAC_INCOMING_ALBUM_DIR=$1
@@ -53,5 +54,6 @@ mkdir -p "$MP3_DIR/$ARTIST/$ALBUM"
 # Re-encode FLAC to MP3
 find . -iname '*.flac' -type f -print0 | while IFS= read -r -d '' file
 do
-    ffmpeg -i "$file" -qscale:a 0 "$MP3_DIR/$ARTIST/$ALBUM/${file[@]/%flac/mp3}" -nostdin
+    base_name=$(basename "${file}")
+    ffmpeg -i "$file" -qscale:a 0 "$MP3_DIR/$ARTIST/$ALBUM/${base_name[@]/%flac/mp3}" -nostdin
 done
